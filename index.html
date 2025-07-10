@@ -1,0 +1,147 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hunter Hardon: Virtual Spiral Notebook</title>
+  <style>
+    /* Splash screen */
+    #splash {
+      position: fixed; inset: 0;
+      background: black; color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; z-index: 1000;
+    }
+    #splash.hide { animation: fadeOut 1s forwards; }
+    @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }body {
+  margin: 0;
+  background: url('https://cdn.spacetelescope.org/archives/images/screen/heic1501a.jpg') no-repeat center center fixed;
+  background-size: cover;
+  color: #eaeaea;
+  font-family: 'Inter', Arial, sans-serif;
+  overflow: hidden;
+}
+header {
+  position: fixed; top: 0; left: 0; right: 0;
+  padding: 1rem 2rem;
+  background: rgba(21,26,30,0.8);
+  color: white; font-size: 1.2rem;
+  letter-spacing: 0.1em; z-index: 500;
+  border-bottom: 1px solid #222;
+}
+audio#clickSound { display: none; }
+.grid {
+  position: absolute; top: 70px; left: 0; right: 0; bottom: 0;
+  display: flex; flex-wrap: wrap;
+  width: 300vw; height: 300vh;
+  transform: translate(-60vw, -60vh);
+  transition: transform 0.2s; cursor: grab;
+}
+.piece {
+  background: rgba(0,0,0,0.6);
+  border: 1px solid #2c2d34;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  border-radius: 18px;
+  margin: 24px;
+  width: 160px; height: 160px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; text-align: center;
+  cursor: pointer;
+  color: #fff;
+}
+.modal {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.95);
+  display: none; padding: 4vh 6vw;
+  overflow-y: auto; z-index: 800;
+}
+.modal.open { display: block; }
+.modal-close {
+  position: absolute; top: 20px; right: 30px;
+  font-size: 2rem; color: #fff; cursor: pointer;
+}
+@keyframes spin {
+  from { transform: rotate(0deg); } to { transform: rotate(360deg); }
+}
+
+  </style>
+</head>
+<body>
+  <div id="splash">Loading...</div>
+  <header>HUNTER HARDON: VIRTUAL SPIRAL NOTEBOOK</header>
+  <audio id="clickSound" src="click.mp3"></audio>
+  <div class="grid" id="grid"></div>
+  <div class="modal" id="modal">
+    <div class="modal-close" id="modalClose">&times;</div>
+    <div id="modalContent"></div>
+  </div>
+  <script>
+    // Hide splash and init grid after load
+    window.addEventListener('load', () => {
+      document.getElementById('splash').classList.add('hide');
+      setTimeout(init, 1000);
+    });function init() {
+  const pieces = [
+    {
+      title: "333 Therapy Recording_1",
+      type: "media",
+      content: `<audio controls><source src="333_leaked_therapy_smaller.mp4" type="video/mp4">Your browser does not support audio.</audio>`
+    },
+    {
+      title: "Lunch with the Narrator",
+      type: "immersive",
+      content: null
+    },
+    {
+      title: "HELLMOUTH: Part One",
+      type: "media",
+      content: `<video controls style="width:100%;"><source src="hellmouth part one.mp4" type="video/mp4">Your browser does not support video.</video>`
+    },
+    {
+      title: "The Surveillance Tape",
+      type: "media",
+      content: `<video controls style="width:100%;"><source src="The Surveillance Tape.mp4" type="video/mp4">Your browser does not support video.</video>`
+    }
+  ];
+
+  const grid = document.getElementById('grid');
+  const modal = document.getElementById('modal');
+  const modalContent = document.getElementById('modalContent');
+  const clickSound = document.getElementById('clickSound');
+
+  pieces.forEach(piece => {
+    const el = document.createElement('div');
+    el.className = 'piece';
+    el.innerText = piece.title;
+    el.onclick = () => showModal(piece);
+    grid.appendChild(el);
+  });
+
+  document.getElementById('modalClose').onclick = () => modal.classList.remove('open');
+  modal.onclick = e => { if (e.target === modal) modal.classList.remove('open'); };
+
+  // Drag-to-pan
+  let isDown=false, startX, startY, posX=-60, posY=-60;
+  grid.addEventListener('mousedown', e=>{ isDown=true; startX=e.clientX; startY=e.clientY; grid.style.cursor='grabbing'; });
+  window.addEventListener('mouseup', ()=>{ isDown=false; grid.style.cursor='grab'; });
+  window.addEventListener('mousemove', e=>{
+    if(!isDown) return;
+    posX += (e.clientX - startX) * 0.3;
+    posY += (e.clientY - startY) * 0.3;
+    grid.style.transform = `translate(${posX}vw, ${posY}vh)`;
+    startX=e.clientX; startY=e.clientY;
+  });
+
+  function showModal(piece) {
+    clickSound.currentTime = 0; clickSound.play();
+    if(piece.type === 'immersive') {
+      modalContent.innerHTML = `
+        <div style="display:flex; gap:2vw; height:75vh;">
+          <div style="flex:1; overflow-y:auto; background:black; color:white; font-family:Courier; padding:20px;" id="typed-script"></div>
+          <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; background:black;">
+            <div style="width:200px; height:200px; border:6px solid white; border-radius:50%; animation:spin 12s linear infinite;"></div>
+            <audio controls autoplay style="margin-top:20px; width:90%;"><source src="lunch_with_narrator_voiceover.mp3" type="audio/mp3">Your browser does not support audio.</audio>
+          </div>
+        </div>
+        <script>
+          const fullScript = `HELL-MOUTH\nINSERT SCENE – LUNCH WITH THE NARRATOR\n\nINT. LIMINAL DINING ROOM – TIME UNRAVELS POLITELY\n\nA table for two.\nSilver so polished it gaslights the eye.\nGhostlight pours in from nowhere.\n\nTHE NARRATOR sits across from YOU.\nYes — you.\nDon’t look around.\nYou’ve been summoned. You cannot leave until dessert.\n\nA SINGLE GLASS CLOCHE covers the plate before him.\nSteam curls like a whispered insult.\n\n                        NARRATOR (V.O.)\n            Shall we?\n\nHe lifts the lid.\n\nREVEAL:\n\n— Sous-vide chicken breast, cut precisely into five coins\n— Glazed with a mirror-shine reduction of bone marrow and regret\n— Nested atop a saffron risotto so yellow it screams\n— Dotted with blood orange gel and shaved truffle from a war zone\n— Served on black ceramic hand-fired in the ruins of a failed marriage\n\nHe slices the first coin like surgery.\nChews with reverence. A moan, nearly imperceptible.\n\n                        NARRATOR (V.O.) (CONT'D)\n
+
